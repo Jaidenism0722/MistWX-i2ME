@@ -102,6 +102,15 @@ public class TimedTasks
                 sender.SendFile(obsRecord, "storeData(QGROUP=__CurrentObservations__,Feed=CurrentObservations)");
             }
 
+            if (dataConfig.MosquitoActivity)
+            {
+                Log.Info($"Building MosquitoActivity I2 record for {locations.Length} locations..");
+                List<GenericResponse<MosquitoActivityResponse>> mqs =
+                    await new MosquitoActivityProduct().Populate(locations);
+                string obsRecord = await new MosquitoActivityRecord().MakeRecord(mqs);
+                sender.SendFile(obsRecord, "storeData(QGROUP=__MosquitoActivity__,Feed=MosquitoActivity)");
+            }
+
             if (dataConfig.DailyForecast)
             {
                 Log.Info($"Building DailyForecast I2 record for {locations.Length} locations..");
